@@ -33,10 +33,12 @@ const Post = mongoose.model("Post", postSchema);
 
 app.get("/", function(req, res){
 
+
   Post.find(function(err, posts) {
     if (err) {
       console.log ("Post query ERROR:  ", err);
     } else {
+      console.log(posts);
       res.render("home", {
         startingContent: homeStartingContent,
         posts: posts
@@ -64,12 +66,9 @@ app.post("/compose", function(req, res){
     searchStr: _.lowerCase(req.body.postTitle)
   });
 
-  post.save(function(err) {
-    if (!err) {
-      res.redirect("/");
-    }
-  });
+  post.save();
 
+  res.redirect("/");
 
 });
 
@@ -79,10 +78,13 @@ app.get("/posts/:searchVal", function(req, res){
   const postsArray = [];
 
   if (ObjectId.isValid(searchVal)) {
+    console.log ("pass valid object test 1");
     if (String(new ObjectId(searchVal)) === searchVal) {
+      console.log ("pass valid object test 2");
       Post.findById({_id: searchVal}, function (err, posts) {
       if (!err) {
-        postsArray.push(posts);   // single value returned.  Convert to array because for post.html
+        console.log("retrieved... ", posts);
+        postsArray.push(posts);   // convert to array because for post.html
         res.render("post", {
           posts: postsArray
         });
@@ -95,9 +97,9 @@ app.get("/posts/:searchVal", function(req, res){
       }
   } else {
     const searchVal = _.lowerCase(req.params.searchVal);
-    console.log("searchVal:  ", searchVal);
-    Post.find({searchStr: searchVal}, function (err, posts) {
+    Post.find({searcStr: searchVal}, function (err, posts) {
       if (!err) {
+        console.log("found record:  ", posts);
         res.render("post", {
           startingContent: homeStartingContent,
           posts: posts

@@ -64,13 +64,9 @@ app.post("/compose", function(req, res){
     searchStr: _.lowerCase(req.body.postTitle)
   });
 
-  post.save(function(err) {
-    if (!err) {
-      res.redirect("/");
-    }
-  });
+  post.save();
 
-
+  res.redirect("/");
 });
 
 app.get("/posts/:searchVal", function(req, res){

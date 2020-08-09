@@ -1,12 +1,12 @@
 {
-  "name": "blog_site",
+  "name": "ejs-challenge",
   "version": "1.0.0",
-  "description": "Blog Website",
+  "description": "",
   "main": "app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "Chris Larson",
+  "author": "",
   "license": "ISC",
   "dependencies": {
     "body-parser": "^1.18.3",
@@ -16,10 +16,5 @@
     "mongoose": "^5.9.28",
     "node": "^14.7.0",
     "nodemon": "^2.0.4"
-  },
-  "devDependencies": {},
-  "repository": {
-    "type": "git",
-    "url": "y"
   }
 }

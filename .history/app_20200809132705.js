@@ -37,6 +37,7 @@ app.get("/", function(req, res){
     if (err) {
       console.log ("Post query ERROR:  ", err);
     } else {
+      console.log(posts);
       res.render("home", {
         startingContent: homeStartingContent,
         posts: posts
@@ -64,27 +65,25 @@ app.post("/compose", function(req, res){
     searchStr: _.lowerCase(req.body.postTitle)
   });
 
-  post.save(function(err) {
-    if (!err) {
-      res.redirect("/");
-    }
-  });
+  post.save();
 
+  res.redirect("/");
 
 });
 
 app.get("/posts/:searchVal", function(req, res){
 
   const searchVal = req.params.searchVal;
-  const postsArray = [];
 
   if (ObjectId.isValid(searchVal)) {
+    console.log ("pass valid object test 1");
     if (String(new ObjectId(searchVal)) === searchVal) {
+      console.log ("pass valid object test 2");
       Post.findById({_id: searchVal}, function (err, posts) {
       if (!err) {
-        postsArray.push(posts);   // single value returned.  Convert to array because for post.html
         res.render("post", {
-          posts: postsArray
+          title: posts.title,
+          content: posts.content
         });
       } else {
         console.log ("findById ERROR:  ", err);
@@ -94,19 +93,24 @@ app.get("/posts/:searchVal", function(req, res){
         console.log ("Not a valid Object ID - 1");
       }
   } else {
-    const searchVal = _.lowerCase(req.params.searchVal);
-    console.log("searchVal:  ", searchVal);
-    Post.find({searchStr: searchVal}, function (err, posts) {
-      if (!err) {
-        res.render("post", {
-          startingContent: homeStartingContent,
-          posts: posts
-        });
-      } else {
-        console.log ("find by searchVal ERROR:  ", err);
-      }
-    });
+      console.log ("Not a valid Object ID - 2");
   }
+
+  const requestedTitle = _.lowerCase(req.params.postName);
+
+
+
+  posts.forEach(function(post){
+    const storedTitle = _.lowerCase(post.title);
+
+    if (storedTitle === requestedTitle) {
+      res.render("post", {
+        title: post.title,
+        content: post.content
+      });
+    }
+  });
+
 });
 
 //process.env.PORT is for heroku  5500 is local port

@@ -37,6 +37,7 @@ app.get("/", function(req, res){
     if (err) {
       console.log ("Post query ERROR:  ", err);
     } else {
+      console.log(posts);
       res.render("home", {
         startingContent: homeStartingContent,
         posts: posts
@@ -64,12 +65,9 @@ app.post("/compose", function(req, res){
     searchStr: _.lowerCase(req.body.postTitle)
   });
 
-  post.save(function(err) {
-    if (!err) {
-      res.redirect("/");
-    }
-  });
+  post.save();
 
+  res.redirect("/");
 
 });
 

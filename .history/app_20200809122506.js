@@ -25,8 +25,7 @@ mongoose.connect("mongodb+srv://clarson80210:E6EbXaZ4m3UhrXZ@clarson10024.ycj6m.
 
 const postSchema = {
   title: String,
-  content: String,
-  searchStr: String   //lowercase post title
+  content: String
 };
 
 const Post = mongoose.model("Post", postSchema);
@@ -37,6 +36,7 @@ app.get("/", function(req, res){
     if (err) {
       console.log ("Post query ERROR:  ", err);
     } else {
+      console.log(posts);
       res.render("home", {
         startingContent: homeStartingContent,
         posts: posts
@@ -60,31 +60,28 @@ app.get("/compose", function(req, res){
 app.post("/compose", function(req, res){
   const post = new Post ({
     title: req.body.postTitle,
-    content: req.body.postBody,
-    searchStr: _.lowerCase(req.body.postTitle)
+    content: req.body.postBody
   });
 
-  post.save(function(err) {
-    if (!err) {
-      res.redirect("/");
-    }
-  });
+  post.save();
 
+  res.redirect("/");
 
 });
 
-app.get("/posts/:searchVal", function(req, res){
+app.get("/posts/:postName", function(req, res){
 
-  const searchVal = req.params.searchVal;
-  const postsArray = [];
+  const idOrTitle = req.params.postName;
 
-  if (ObjectId.isValid(searchVal)) {
-    if (String(new ObjectId(searchVal)) === searchVal) {
-      Post.findById({_id: searchVal}, function (err, posts) {
+  if (ObjectId.isValid(idOrTitle)) {
+    console.log ("pass valid object test 1");
+    if (String(new ObjectId(idOrTitle)) === idOrTitle) {
+      console.log ("pass valid object test 2");
+      Post.findById({_id: idOrTitle}, function (err, posts) {
       if (!err) {
-        postsArray.push(posts);   // single value returned.  Convert to array because for post.html
         res.render("post", {
-          posts: postsArray
+          title: posts.title,
+          content: posts.content
         });
       } else {
         console.log ("findById ERROR:  ", err);
@@ -94,19 +91,23 @@ app.get("/posts/:searchVal", function(req, res){
         console.log ("Not a valid Object ID - 1");
       }
   } else {
-    const searchVal = _.lowerCase(req.params.searchVal);
-    console.log("searchVal:  ", searchVal);
-    Post.find({searchStr: searchVal}, function (err, posts) {
-      if (!err) {
-        res.render("post", {
-          startingContent: homeStartingContent,
-          posts: posts
-        });
-      } else {
-        console.log ("find by searchVal ERROR:  ", err);
-      }
-    });
+      console.log ("Not a valid Object ID - 2");
   }
+
+
+  // const requestedTitle = _.lowerCase(req.params.postName);
+
+  // posts.forEach(function(post){
+  //   const storedTitle = _.lowerCase(post.title);
+
+  //   if (storedTitle === requestedTitle) {
+  //     res.render("post", {
+  //       title: post.title,
+  //       content: post.content
+  //     });
+  //   }
+  // });
+
 });
 
 //process.env.PORT is for heroku  5500 is local port

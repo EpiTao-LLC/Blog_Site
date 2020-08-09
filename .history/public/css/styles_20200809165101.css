@@ -31,7 +31,7 @@ html {
   /* outline:2px solid #d6e6f2; */
   line-height: 1.375;
   white-space: pre-wrap;
-  padding: 0em;
+  padding: 1em;
 }
 pre {
   background: none;
